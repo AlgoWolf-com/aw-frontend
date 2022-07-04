@@ -10,17 +10,32 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build-and-deploy:
 
     runs-on: ubuntu-latest
+    env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: "ap-southeast-2"
 
     steps:
+    # Build (CI)
     - uses: actions/checkout@v3
     - name: Use Node.js 16.x
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 16.x
         cache: 'npm'
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
+
+    # Deploy (CD)
+    - name: Deploy React App to S3
+      run: | 
+        aws s3 sync --delete build/ s3://aw2-frontend/ 
+        aws cloudfront create-invalidation \
+          --distribution-id E2IJVXKCHAEGZW \
+          --paths "/*"
+      
+
