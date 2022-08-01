@@ -6,7 +6,8 @@ function GetMessage() {
   const [message, setMessage] = useState(null);
   
   const getMessage = async () => {
-    const { data } = await axios.get("https://api.algowolf.com/message");
+    const endpoint = "/users/message"
+    const { data } = await axios.get("https://" + window.location.host.replace("www", "api") + endpoint);
     console.log(data);
     setMessage(data.message);
   }

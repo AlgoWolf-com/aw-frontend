@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 function deploy_to_s3() {
-    aws s3 sync --delete build/ s3://aw2-frontend/ 
+    aws s3 sync --delete build/ s3://${bucket_name}/ 
     aws cloudfront create-invalidation \
         --distribution-id ${distribution_id} \
         --paths "/*"
@@ -10,9 +10,11 @@ function deploy_to_s3() {
 branch_name="${GITHUB_REF##*/}"
 echo "Deploying from ${branch_name} branch."
 if [[ ${branch_name} == "master" ]]; then
-    distribution_id=E2IJVXKCHAEGZW
+    distribution_id=E33LM8QN8FI3WF # TODO: Retrieve more cleanly
+    bucket_name=aw2-dev-frontend # TODO
 elif [[ ${branch_name} == "production" ]]; then
-    distribution_id=null
+    distribution_id=null # TODO
+    bucket_name=aw2-prod-frontend # TODO
 else
     printf '%s\n' "Unexpected branch name" >&2
     exit 1

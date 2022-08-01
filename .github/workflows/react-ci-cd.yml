@@ -34,7 +34,5 @@ jobs:
     - name: Deploy React App to S3
       shell: bash
       run: | 
-        chmod +x scripts/deploy-react-app
-        scripts/deploy-react-app
-      
-
+        chmod +x tools/deploy-react-app
+        tools/deploy-react-app
